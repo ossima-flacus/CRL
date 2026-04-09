@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Connexion - CRL Christ Roi des Leaders</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <style>
+      body {
+        background: linear-gradient(135deg, #0c4e8c 0%, #f05a1a 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+      .login-hero {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-radius: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
+        padding: 60px 48px;
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+        animation: fadeInUp 1s ease;
+      }
+      .login-logo {
+        width: 100px;
+        height: 100px;
+        border-radius: 28px;
+        object-fit: cover;
+        margin: 0 auto 32px;
+        box-shadow: 0 20px 40px rgba(240, 90, 26, 0.4);
+        animation: float 4s ease-in-out infinite;
+      }
+      .login-title {
+        color: white;
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+        letter-spacing: -0.5px;
+      }
+      .login-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.15rem;
+        margin-bottom: 48px;
+        font-weight: 500;
+      }
+      .user-type-select {
+        width: 100%;
+        padding: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 32px;
+        transition: all 0.4s;
+        cursor: pointer;
+      }
+      .user-type-select:focus {
+        border-color: #f05a1a;
+        box-shadow: 0 8px 24px rgba(240, 90, 26, 0.3);
+      }
+      .form-section {
+        display: none;
+        animation: fadeInUp 0.5s ease;
+      }
+      .form-section.active {
+        display: block;
+      }
+      .form-group {
+        margin-bottom: 28px;
+        text-align: left;
+      }
+      .form-group label {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 12px;
+        font-size: 1rem;
+        display: block;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 18px 24px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        font-size: 1.05rem;
+        transition: all 0.4s;
+        box-sizing: border-box;
+      }
+      .form-group input:focus {
+        border-color: #f05a1a;
+        background: white;
+        box-shadow: 0 8px 24px rgba(240, 90, 26, 0.3);
+        transform: translateY(-2px);
+      }
+      .login-btn {
+        width: 100%;
+        padding: 20px;
+        background: linear-gradient(135deg, #f05a1a, #f77f3c);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.4s;
+        box-shadow: 0 16px 40px rgba(240, 90, 26, 0.5);
+        margin-top: 8px;
+      }
+      .login-btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 48px rgba(240, 90, 26, 0.6);
+      }
+      .back-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: 16px;
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 24px;
+        transition: all 0.3s;
+      }
+      .back-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .message {
+        padding: 16px 20px;
+        border-radius: 16px;
+        margin-top: 20px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+      .message.success {
+        background: rgba(34, 197, 94, 0.3);
+        color: white;
+      }
+      .message.error {
+        background: rgba(239, 68, 68, 0.3);
+        color: white;
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+      @media (max-width: 600px) {
+        .login-hero {
+          padding: 40px 32px;
+        }
+        .login-title {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-hero">
+      <img src="img/logo.jpg" alt="CRL Logo" class="login-logo" />
+      <h1 class="login-title">Christ Roi des Leaders</h1>
+      <p class="login-subtitle">
+        Sélectionnez votre profil pour vous connecter
+      </p>
+
+      <!-- Role Selector -->
+      <select id="userTypeSelect" class="user-type-select">
+        <option value="">Choisir type utilisateur</option>
+        <option value="admin">👑 Administrateur</option>
+        <option value="secretaire">📋 Secrétaire</option>
+        <option value="comptable">💰 Comptable</option>
+        <option value="parent">👨‍👩‍👧 Parent</option>
+        <option value="apprenant">🎓 Apprenant</option>
+      </select>
+
+      <!-- Admin Login -->
+      <div id="adminForm" class="form-section">
+        <a href="#" class="back-btn" onclick="showRoleSelect()"
+          ><i class="fas fa-arrow-left"></i> Changer profil</a
+        >
+        <div class="form-group">
+          <label for="adminUsername"
+            ><i class="fas fa-user-shield"></i> Identifiant Admin</label
+          >
+          <input type="text" id="adminUsername" required />
+        </div>
+        <div class="form-group">
+          <label for="adminPassword"
+            ><i class="fas fa-lock"></i> Mot de passe</label
+          >
+          <input type="password" id="adminPassword" required />
+        </div>
+        <button onclick="loginUser('admin')" class="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Connexion Admin
+        </button>
+        <div id="adminMessage" class="message"></div>
+      </div>
+
+      <!-- Secretaire Login -->
+      <div id="secretaireForm" class="form-section">
+        <a href="#" class="back-btn" onclick="showRoleSelect()"
+          ><i class="fas fa-arrow-left"></i> Changer profil</a
+        >
+        <div class="form-group">
+          <label for="secretaireUsername"
+            ><i class="fas fa-clipboard-list"></i> Identifiant</label
+          >
+          <input type="text" id="secretaireUsername" required />
+        </div>
+        <div class="form-group">
+          <label for="secretairePassword"
+            ><i class="fas fa-lock"></i> Mot de passe</label
+          >
+          <input type="password" id="secretairePassword" required />
+        </div>
+        <button onclick="loginUser('secretaire')" class="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Connexion Secrétaire
+        </button>
+        <div id="secretaireMessage" class="message"></div>
+      </div>
+
+      <!-- Comptable Login -->
+      <div id="comptableForm" class="form-section">
+        <a href="#" class="back-btn" onclick="showRoleSelect()"
+          ><i class="fas fa-arrow-left"></i> Changer profil</a
+        >
+        <div class="form-group">
+          <label for="comptableUsername"
+            ><i class="fas fa-calculator"></i> Identifiant</label
+          >
+          <input type="text" id="comptableUsername" required />
+        </div>
+        <div class="form-group">
+          <label for="comptablePassword"
+            ><i class="fas fa-lock"></i> Mot de passe</label
+          >
+          <input type="password" id="comptablePassword" required />
+        </div>
+        <button onclick="loginUser('comptable')" class="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Connexion Comptable
+        </button>
+        <div id="comptableMessage" class="message"></div>
+      </div>
+
+      <!-- Parent Login -->
+      <div id="parentForm" class="form-section">
+        <a href="#" class="back-btn" onclick="showRoleSelect()"
+          ><i class="fas fa-arrow-left"></i> Changer profil</a
+        >
+        <div class="form-group">
+          <label for="parentUsername"
+            ><i class="fas fa-users"></i> Identifiant Parent</label
+          >
+          <input type="text" id="parentUsername" required />
+        </div>
+        <div class="form-group">
+          <label for="parentPassword"
+            ><i class="fas fa-lock"></i> Mot de passe</label
+          >
+          <input type="password" id="parentPassword" required />
+        </div>
+        <button onclick="loginUser('parent')" class="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Connexion Parent
+        </button>
+        <div id="parentMessage" class="message"></div>
+      </div>
+
+      <!-- Apprenant Login -->
+      <div id="apprenantForm" class="form-section">
+        <a href="#" class="back-btn" onclick="showRoleSelect()"
+          ><i class="fas fa-arrow-left"></i> Changer profil</a
+        >
+        <div class="form-group">
+          <label for="apprenantUsername"
+            ><i class="fas fa-user-graduate"></i> Identifiant Étudiant</label
+          >
+          <input type="text" id="apprenantUsername" required />
+        </div>
+        <div class="form-group">
+          <label for="apprenantPassword"
+            ><i class="fas fa-lock"></i> Mot de passe</label
+          >
+          <input type="password" id="apprenantPassword" required />
+        </div>
+        <button onclick="loginUser('apprenant')" class="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Connexion Étudiant
+        </button>
+        <div id="apprenantMessage" class="message"></div>
+      </div>
+    </div>
+
+    <script>
+      function showRoleSelect() {
+        document
+          .querySelectorAll(".form-section")
+          .forEach((form) => form.classList.remove("active"));
+        document.getElementById("userTypeSelect").value = "";
+      }
+
+      function showForm(role) {
+        document
+          .querySelectorAll(".form-section")
+          .forEach((form) => form.classList.remove("active"));
+        document.getElementById(role + "Form").classList.add("active");
+      }
+
+      document
+        .getElementById("userTypeSelect")
+        .addEventListener("change", function () {
+          const role = this.value;
+          if (role) showForm(role);
+        });
+
+      async function loginUser(role) {
+        const username = document.getElementById(role + "Username").value;
+        const password = document.getElementById(role + "Password").value;
+        const messageEl = document.getElementById(role + "Message");
+
+        try {
+          const response = await fetch(
+            "http://localhost/CRL/backend/public/index.php?route=auth/login",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password }),
+            },
+          );
+          const data = await response.json();
+
+          if (data.success) {
+            messageEl.className = "message success";
+            messageEl.textContent = "Connexion réussie! Redirection...";
+            setTimeout(() => (window.location.href = "dashboard.html"), 1500);
+          } else {
+            messageEl.className = "message error";
+            messageEl.textContent = data.message || "Erreur de connexion";
+          }
+        } catch (error) {
+          messageEl.className = "message error";
+          messageEl.textContent = "Erreur serveur";
+        }
+      }
+    </script>
+  </body>
+</html>

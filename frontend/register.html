@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inscription Test Users - CRL</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <style>
+      body {
+        background: linear-gradient(135deg, #0c4e8c 0%, #f05a1a 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+      .register-container {
+        max-width: 900px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+      }
+      .login-side,
+      .register-side {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-radius: 32px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 60px 48px;
+      }
+      .login-side {
+        animation: float 4s ease-in-out infinite;
+      }
+      .logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        object-fit: cover;
+        margin-bottom: 24px;
+        box-shadow: 0 16px 32px rgba(240, 90, 26, 0.3);
+      }
+      h1 {
+        color: white;
+        font-size: 2.3rem;
+        font-weight: 800;
+        margin-bottom: 12px;
+      }
+      .subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+      }
+      .form-group {
+        margin-bottom: 24px;
+      }
+      label {
+        color: white;
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: block;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 18px 24px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        font-size: 1rem;
+        transition: all 0.4s;
+      }
+      input:focus,
+      select:focus {
+        border-color: #f05a1a;
+        background: white;
+        box-shadow: 0 8px 24px rgba(240, 90, 26, 0.3);
+      }
+      .btn {
+        width: 100%;
+        padding: 20px;
+        background: linear-gradient(135deg, #f05a1a, #f77f3c);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.4s;
+        box-shadow: 0 16px 40px rgba(240, 90, 26, 0.5);
+        margin-top: 8px;
+      }
+      .btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 48px rgba(240, 90, 26, 0.6);
+      }
+      .login-link {
+        color: rgba(255, 255, 255, 0.9);
+        text-decoration: none;
+        font-weight: 600;
+        display: block;
+        margin-top: 20px;
+      }
+      .login-link:hover {
+        color: white;
+      }
+      .message {
+        padding: 16px;
+        border-radius: 16px;
+        margin-top: 20px;
+        font-weight: 600;
+      }
+      .success {
+        background: rgba(34, 197, 94, 0.3);
+        color: white;
+        border: 1px solid rgba(34, 197, 94, 0.4);
+      }
+      .error {
+        background: rgba(239, 68, 68, 0.3);
+        color: white;
+        border: 1px solid rgba(239, 68, 68, 0.4);
+      }
+      .users-list {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 24px;
+        margin-top: 24px;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .user-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        margin-bottom: 12px;
+      }
+      @media (max-width: 900px) {
+        .register-container {
+          grid-template-columns: 1fr;
+          gap: 32px;
+        }
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <div class="login-side">
+        <img src="img/logo.jpg" alt="CRL Logo" class="logo" />
+        <h1>Connexion</h1>
+        <p class="subtitle">Accès rapide au dashboard</p>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="quickUsername" />
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="quickPassword" />
+        </div>
+        <button onclick="quickLogin()" class="btn">Se connecter</button>
+        <div id="quickMessage" class="message"></div>
+        <a href="login.html" class="login-link">Formulaire complet →</a>
+      </div>
+
+      <div class="register-side">
+        <h1>Inscription Test</h1>
+        <p class="subtitle">Créer users pour tests</p>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="regUsername" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="regEmail" />
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" id="regPassword" />
+        </div>
+        <select id="regRole">
+          <option value="admin">Admin</option>
+          <option value="secretaire">Secrétaire</option>
+          <option value="comptable">Comptable</option>
+          <option value="parent">Parent</option>
+          <option value="apprenant">Apprenant</option>
+        </select>
+        <button onclick="registerUser()" class="btn">Créer User</button>
+        <div id="regMessage" class="message"></div>
+        <div class="users-list" id="usersList">
+          <p>Users chargés...</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API = "http://localhost/CRL/backend/public/index.php?route=";
+
+      async function quickLogin() {
+        const username = document.getElementById("quickUsername").value;
+        const password = document.getElementById("quickPassword").value;
+        const msg = document.getElementById("quickMessage");
+
+        try {
+          const res = await fetch(API + "auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            msg.className = "message success";
+            msg.textContent = "Login OK! Redirection...";
+            setTimeout(() => (location.href = "dashboard.html"), 1000);
+          } else {
+            msg.className = "message error";
+            msg.textContent = data.message;
+          }
+        } catch (e) {
+          msg.className = "message error";
+          msg.textContent = "Erreur: " + e;
+        }
+      }
+
+      async function registerUser() {
+        const username = document.getElementById("regUsername").value;
+        const email = document.getElementById("regEmail").value;
+        const password = document.getElementById("regPassword").value;
+        const role = document.getElementById("regRole").value;
+        const msg = document.getElementById("regMessage");
+
+        try {
+          const res = await fetch(API + "auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password, role }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            msg.className = "message success";
+            msg.textContent = "User créé!";
+            loadUsers();
+            document.getElementById("regUsername").value = "";
+          } else {
+            msg.className = "message error";
+            msg.textContent = data.message;
+          }
+        } catch (e) {
+          msg.className = "message error";
+          msg.textContent = "Erreur: " + e;
+          console.error(e);
+        }
+      }
+
+      async function loadUsers() {
+        try {
+          const res = await fetch(API + "users/list");
+          const data = await res.json();
+          if (data.success) {
+            const container = document.getElementById("usersList");
+            container.innerHTML =
+              data.users
+                .map(
+                  (u) => `
+                        <div class="user-item">
+                            <span>${u.username} <small>(${u.role})</small></span>
+                            <button onclick="deleteUser(${u.id})" style="background:#ef4444;color:white;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;">X</button>
+                        </div>
+                    `,
+                )
+                .join("") || "<p>Aucun user</p>";
+          }
+        } catch (e) {
+          console.error("Load users:", e);
+        }
+      }
+
+      async function deleteUser(id) {
+        if (confirm("Supprimer?")) {
+          try {
+            const res = await fetch(API + `users/delete?id=${id}`, {
+              method: "DELETE",
+            });
+            const data = await res.json();
+            if (data.success) loadUsers();
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
+
+      window.onload = loadUsers;
+    </script>
+  </body>
+</html>
