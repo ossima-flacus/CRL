@@ -4,14 +4,14 @@ const NAV_BASE = "../backend/public/index.php";
 async function checkAuth() {
   try {
     const response = await fetch(`${NAV_BASE}?route=auth/me`);
-    
+
     if (!response.ok) {
       return false;
     }
 
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      console.error('Invalid response type from auth/me');
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.error("Invalid response type from auth/me");
       return false;
     }
 
@@ -19,10 +19,10 @@ async function checkAuth() {
     if (!data.success) {
       return false;
     }
-    
+
     return data.user.role;
   } catch (error) {
-    console.error('Auth check error:', error);
+    console.error("Auth check error:", error);
     return false;
   }
 }
@@ -60,7 +60,7 @@ window.logout = async () => {
   try {
     await fetch(`${NAV_BASE}?route=auth/logout`, { method: "POST" });
   } catch (error) {
-    console.error('Logout error:', error);
+    console.error("Logout error:", error);
   }
   window.location.href = "login.html";
 };
