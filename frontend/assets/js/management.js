@@ -14,8 +14,24 @@ function showToast(message, isError = false) {
 }
 
 async function apiJson(route, options = {}) {
-    const response = await fetch(`${API_BASE}?route=${route}`, options);
-    return response.json();
+    try {
+        const response = await fetch(`${API_BASE}?route=${route}`, options);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Réponse serveur invalide (HTML reçu au lieu de JSON)');
+        }
+        
+        return response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        showToast(`Erreur API: ${error.message}`, true);
+        throw error;
+    }
 }
 
 async function fetchClasses() {

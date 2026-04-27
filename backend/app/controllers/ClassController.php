@@ -25,6 +25,10 @@ class ClassController
             $classId = $model->save($data);
             $this->respond(['success' => true, 'class_id' => $classId, 'message' => 'Classe créée avec succès.']);
         } catch (PDOException $e) {
+            error_log('Create class error: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur lors de la création de la classe.'], 500);
+        } catch (Exception $e) {
+            error_log('Create class exception: ' . $e->getMessage());
             $this->respond(['success' => false, 'message' => 'Erreur serveur.'], 500);
         }
     }
@@ -35,8 +39,12 @@ class ClassController
             $pdo = Database::connect();
             $model = new ClassModel($pdo);
             $classes = $model->getAll();
-            $this->respond(['success' => true, 'classes' => $classes]);
+            $this->respond(['success' => true, 'classes' => $classes, 'count' => count($classes)]);
         } catch (PDOException $e) {
+            error_log('List classes error: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur lors de la récupération des classes.'], 500);
+        } catch (Exception $e) {
+            error_log('List classes exception: ' . $e->getMessage());
             $this->respond(['success' => false, 'message' => 'Erreur serveur.'], 500);
         }
     }

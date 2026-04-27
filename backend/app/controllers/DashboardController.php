@@ -14,19 +14,21 @@ class DashboardController
         try {
             $pdo = Database::connect();
 
-            // Role-specific data
-            $roleData = ['role' => $user['role']];
+            $roleData = [
+                'role' => $user['role'],
+                'username' => $user['username'],
+                'email' => $user['email']
+            ];
 
-            if (in_array($user['role'], ['admin', 'secretaire', 'comptable'])) {
+            if (in_array($user['role'], ['admin', 'secretaire', 'comptable'], true)) {
                 $classModel = new ClassModel($pdo);
                 $studentModel = new Student($pdo);
                 $roleData['classes'] = $classModel->getAll();
                 $roleData['students'] = $studentModel->getAll();
-                $roleData['permissions'] = ['add_class', 'add_student', 'view_dashboard'];
-            } elseif (in_array($user['role'], ['parent', 'apprenant'])) {
-                // Personal bulletins only
-                // TODO
-                $roleData['permissions'] = ['view_bulletins', 'blog'];
+                $roleData['permissions'] = ['add_class', 'add_student', 'view_dashboard', 'manage_users'];
+            } elseif (in_array($user['role'], ['parent', 'apprenant'], true)) {
+                // Personal data only
+                $roleData['permissions'] = ['view_bulletins', 'view_blog'];
             }
 
             $this->respond([
@@ -34,7 +36,11 @@ class DashboardController
                 'data' => $roleData
             ]);
         } catch (PDOException $e) {
-            $this->respond(['success' => false, 'message' => 'Erreur dashboard.'], 500);
+            error_log('Dashboard error: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur lors du chargement du tableau de bord.'], 500);
+        } catch (Exception $e) {
+            error_log('Dashboard exception: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur serveur.'], 500);
         }
     }
 

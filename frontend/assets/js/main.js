@@ -92,22 +92,46 @@ async function loadRegistrationClasses() {
 
     try {
         const response = await fetch('../backend/public/index.php?route=class.list');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Réponse serveur invalide');
+        }
+
         const result = await response.json();
 
-        if (!response.ok || !result.success) {
+        if (!result.success) {
+            console.warn('Failed to load classes:', result.message);
             return;
         }
 
         classSelect.innerHTML = '<option value="">Sélectionnez une classe</option>';
-        result.classes.forEach((classItem) => {
-            const option = document.createElement('option');
-            option.value = classItem.id;
-            option.textContent = `${classItem.level} — ${classItem.name}`;
-            classSelect.appendChild(option);
-        });
+        if (result.classes && Array.isArray(result.classes)) {
+            result.classes.forEach((classItem) => {
+                const option = document.createElement('option');
+                option.value = classItem.id;
+                option.textContent = `${escapeHtml(classItem.level)} — ${escapeHtml(classItem.name)}`;
+                classSelect.appendChild(option);
+            });
+        }
     } catch (error) {
-        console.warn('Impossible de charger les classes.', error);
+        console.error('Error loading classes:', error);
     }
+}
+
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return String(text).replace(/[&<>"']/g, m => map[m]);
 }
 
 loadRegistrationClasses();

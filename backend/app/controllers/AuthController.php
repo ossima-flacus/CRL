@@ -10,12 +10,18 @@ class AuthController
         $rawBody = file_get_contents('php://input');
         $data = json_decode($rawBody, true);
 
-        if ((!isset($data['username']) && !isset($data['email'])) || !isset($data['password'])) {
-            $this->respond(['success' => false, 'message' => 'Nom d’utilisateur/email et mot de passe requis.'], 400);
+        if (!is_array($data)) {
+            $this->respond(['success' => false, 'message' => 'Format JSON invalide.'], 400);
             return;
         }
 
-        $loginValue = $data['username'] ?? $data['email'];
+        $loginValue = $data['username'] ?? $data['email'] ?? null;
+        $password = $data['password'] ?? null;
+
+        if (!$loginValue || !$password) {
+            $this->respond(['success' => false, 'message' => 'Identifiant et mot de passe requis.'], 400);
+            return;
+        }
 
         try {
             $pdo = Database::connect();
@@ -30,14 +36,24 @@ class AuthController
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
+            $_SESSION['email'] = $user['email'];
 
             $this->respond([
                 'success' => true, 
                 'message' => 'Connexion réussie.',
-                'user' => ['id' => $user['id'], 'username' => $user['username'], 'role' => $user['role']]
+                'user' => [
+                    'id' => $user['id'],
+                    'username' => $user['username'],
+                    'email' => $user['email'],
+                    'role' => $user['role']
+                ]
             ]);
         } catch (PDOException $e) {
-            $this->respond(['success' => false, 'message' => 'Erreur DB. Vérifiez phpMyAdmin crl_db.'], 500);
+            error_log('Login error: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur serveur.'], 500);
+        } catch (Exception $e) {
+            error_log('Login exception: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur serveur.'], 500);
         }
     }
 
@@ -46,8 +62,13 @@ class AuthController
         $rawBody = file_get_contents('php://input');
         $data = json_decode($rawBody, true);
 
+        if (!is_array($data)) {
+            $this->respond(['success' => false, 'message' => 'Format JSON invalide.'], 400);
+            return;
+        }
+
         if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
-            $this->respond(['success' => false, 'message' => 'Username, email et mot de passe requis.'], 400);
+            $this->respond(['success' => false, 'message' => 'Nom d\'utilisateur, email et mot de passe requis.'], 400);
             return;
         }
 
@@ -58,13 +79,18 @@ class AuthController
 
         $allowedRoles = ['admin', 'secretaire', 'comptable', 'parent', 'apprenant'];
         $role = $data['role'] ?? 'apprenant';
-        if (!in_array($role, $allowedRoles)) {
+        if (!in_array($role, $allowedRoles, true)) {
             $this->respond(['success' => false, 'message' => 'Rôle invalide.'], 400);
             return;
         }
 
-        if (strlen($data['password']) < 6) {
-            $this->respond(['success' => false, 'message' => 'Mot de passe trop court.'], 400);
+        if (strlen((string)$data['password']) < 6) {
+            $this->respond(['success' => false, 'message' => 'Mot de passe doit avoir au moins 6 caractères.'], 400);
+            return;
+        }
+
+        if (strlen((string)$data['username']) < 3) {
+            $this->respond(['success' => false, 'message' => 'Nom d\'utilisateur doit avoir au moins 3 caractères.'], 400);
             return;
         }
 
@@ -73,14 +99,18 @@ class AuthController
             $userModel = new User($pdo);
             $existing = $userModel->findByUsername($data['username']);
             if ($existing) {
-                $this->respond(['success' => false, 'message' => 'Username déjà pris.'], 409);
+                $this->respond(['success' => false, 'message' => 'Cet utilisateur existe déjà.'], 409);
                 return;
             }
 
             $userId = $userModel->create($data['username'], $data['email'], $data['password'], $role);
-            $this->respond(['success' => true, 'user_id' => $userId, 'role' => $role, 'message' => 'Compte créé.']);
+            $this->respond(['success' => true, 'user_id' => $userId, 'role' => $role, 'message' => 'Compte créé avec succès.']);
         } catch (PDOException $e) {
-            $this->respond(['success' => false, 'message' => 'Erreur lors de la création.'], 500);
+            error_log('Register error: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur lors de la création du compte.'], 500);
+        } catch (Exception $e) {
+            error_log('Register exception: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur serveur.'], 500);
         }
     }
 

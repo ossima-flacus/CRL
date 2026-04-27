@@ -151,8 +151,25 @@ function renderStructure() {
 }
 
 async function fetchJson(route, options = {}) {
-    const response = await fetch(`${API_BASE}?route=${route}`, options);
-    return response.json();
+    try {
+        const response = await fetch(`${API_BASE}?route=${route}`, options);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Invalid response type. Received:', text.substring(0, 500));
+            throw new Error('Réponse serveur invalide (HTML reçu au lieu de JSON)');
+        }
+        
+        return response.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        throw error;
+    }
 }
 
 async function fetchClasses() {

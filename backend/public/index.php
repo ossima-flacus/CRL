@@ -1,15 +1,63 @@
 <?php
+// Error handling - Ensure JSON is returned, not HTML
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../../logs/php-errors.log');
+
+// Create logs directory if it doesn't exist
+$logDir = __DIR__ . '/../../logs';
+if (!is_dir($logDir)) {
+    @mkdir($logDir, 0755, true);
+}
+
+// Set error and exception handlers to return JSON
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    error_log("[$errno] $errstr in $errfile:$errline");
+    return false;
+});
+
+set_exception_handler(function ($exception) {
+    http_response_code(500);
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Erreur serveur. Veuillez réessayer plus tard.',
+        'error' => ($_ENV['APP_ENV'] ?? 'production') === 'development' ? $exception->getMessage() : null
+    ]);
+    exit;
+});
+
+// Set headers
 header('Content-Type: application/json; charset=UTF-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-session_start();
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 
+// Start session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Load environment variables
+require __DIR__ . '/../../config.php';
+
+// Load required classes
 require __DIR__ . '/../app/config/Database.php';
+require __DIR__ . '/../app/middleware/AuthMiddleware.php';
+require __DIR__ . '/../app/middleware/RoleMiddleware.php';
 require __DIR__ . '/../app/controllers/AuthController.php';
 require __DIR__ . '/../app/controllers/RegistrationController.php';
 require __DIR__ . '/../app/controllers/ClassController.php';
 require __DIR__ . '/../app/controllers/StudentController.php';
-require __DIR__ . '/../app/middleware/AuthMiddleware.php';
-require __DIR__ . '/../app/middleware/RoleMiddleware.php';
+require __DIR__ . '/../app/controllers/UserController.php';
+require __DIR__ . '/../app/controllers/DashboardController.php';
 
 $route = $_GET['route'] ?? '';
 if ($route === '') {
@@ -82,28 +130,24 @@ switch ($route) {
     case 'dashboard':
         RoleMiddleware::requireRole(['admin', 'secretaire', 'comptable', 'parent', 'apprenant']);
         if ($method === 'GET') {
-require __DIR__ . '/../app/controllers/DashboardController.php';
             (new DashboardController())->dashboard();
             exit;
         }
         break;
     case 'users/list':
         RoleMiddleware::requireRole(['admin']);
-        require __DIR__ . '/../app/controllers/UserController.php';
         (new UserController())->list();
         exit;
         break;
     case 'users/create':
         RoleMiddleware::requireRole(['admin']);
         if ($method === 'POST') {
-            require __DIR__ . '/../app/controllers/UserController.php';
             (new UserController())->create();
             exit;
         }
         break;
     case 'users/delete':
         RoleMiddleware::requireRole(['admin']);
-        require __DIR__ . '/../app/controllers/UserController.php';
         (new UserController())->delete();
         exit;
         break;

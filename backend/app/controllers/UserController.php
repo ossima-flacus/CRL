@@ -9,9 +9,13 @@ class UserController {
             $pdo = Database::connect();
             $userModel = new User($pdo);
             $users = $userModel->getAllActive();
-            $this->respond(['success' => true, 'users' => $users]);
+            $this->respond(['success' => true, 'users' => $users, 'count' => count($users)]);
+        } catch (PDOException $e) {
+            error_log('List users error: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur lors de la récupération des utilisateurs'], 500);
         } catch (Exception $e) {
-            $this->respond(['success' => false, 'message' => 'Erreur liste'], 500);
+            error_log('List users exception: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur serveur'], 500);
         }
     }
 
@@ -19,8 +23,8 @@ class UserController {
         $rawBody = file_get_contents('php://input');
         $data = json_decode($rawBody, true);
         
-        if (!$data || !isset($data['username'], $data['email'], $data['password'], $data['role'])) {
-            $this->respond(['success' => false, 'message' => 'Données invalides'], 400);
+        if (!is_array($data) || !isset($data['username'], $data['email'], $data['password'], $data['role'])) {
+            $this->respond(['success' => false, 'message' => 'Données invalides ou incomplètes'], 400);
             return;
         }
 
@@ -28,26 +32,38 @@ class UserController {
             $pdo = Database::connect();
             $userModel = new User($pdo);
             $userId = $userModel->create($data['username'], $data['email'], $data['password'], $data['role']);
-            $this->respond(['success' => true, 'user_id' => $userId]);
+            $this->respond(['success' => true, 'user_id' => $userId, 'message' => 'Utilisateur créé avec succès']);
+        } catch (PDOException $e) {
+            error_log('Create user error: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur lors de la création de l\'utilisateur'], 500);
         } catch (Exception $e) {
-            $this->respond(['success' => false, 'message' => 'Erreur création'], 500);
+            error_log('Create user exception: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur serveur'], 500);
         }
     }
 
     public function delete(): void {
         $userId = $_GET['id'] ?? 0;
-        if (!$userId) {
-            $this->respond(['success' => false, 'message' => 'ID requis'], 400);
+        if (!$userId || !is_numeric($userId)) {
+            $this->respond(['success' => false, 'message' => 'ID utilisateur requis et doit être valide'], 400);
             return;
         }
 
         try {
             $pdo = Database::connect();
             $userModel = new User($pdo);
-            $userModel->delete($userId);
-            $this->respond(['success' => true]);
+            $success = $userModel->delete((int)$userId);
+            if (!$success) {
+                $this->respond(['success' => false, 'message' => 'Utilisateur non trouvé'], 404);
+                return;
+            }
+            $this->respond(['success' => true, 'message' => 'Utilisateur supprimé avec succès']);
+        } catch (PDOException $e) {
+            error_log('Delete user error: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur lors de la suppression de l\'utilisateur'], 500);
         } catch (Exception $e) {
-            $this->respond(['success' => false, 'message' => 'Erreur suppression'], 500);
+            error_log('Delete user exception: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur serveur'], 500);
         }
     }
 

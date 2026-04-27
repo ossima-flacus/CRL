@@ -22,7 +22,7 @@ class RegistrationController
         }
 
         if (!filter_var($data['guardian']['email'], FILTER_VALIDATE_EMAIL)) {
-            $this->respond(['success' => false, 'message' => 'Adresse email invalide.'], 400);
+            $this->respond(['success' => false, 'message' => 'Adresse email du tuteur invalide.'], 400);
             return;
         }
 
@@ -31,9 +31,17 @@ class RegistrationController
             $registration = new Registration($pdo);
             $registrationId = $registration->save($data);
 
-            $this->respond(['success' => true, 'registration_id' => $registrationId, 'message' => 'Inscription enregistrée avec succès.']);
+            $this->respond([
+                'success' => true, 
+                'registration_id' => $registrationId, 
+                'message' => 'Inscription enregistrée avec succès.'
+            ]);
         } catch (PDOException $e) {
-            $this->respond(['success' => false, 'message' => 'Erreur serveur. Veuillez réessayer plus tard.'], 500);
+            error_log('Registration error: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur lors de l\'enregistrement de l\'inscription.'], 500);
+        } catch (Exception $e) {
+            error_log('Registration exception: ' . $e->getMessage());
+            $this->respond(['success' => false, 'message' => 'Erreur serveur.'], 500);
         }
     }
 

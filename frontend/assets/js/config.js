@@ -26,7 +26,7 @@ function buildApiUrl(endpoint) {
   return API_CONFIG.BASE_URL + endpoint;
 }
 
-// Appel API utilitaire
+// Appel API utilitaire avec meilleure gestion d'erreurs
 async function apiCall(endpoint, options = {}) {
   const { method = "GET", body = null, headers = {} } = options;
 
@@ -38,16 +38,41 @@ async function apiCall(endpoint, options = {}) {
         ...headers,
       },
       body: body ? JSON.stringify(body) : undefined,
+      credentials: 'same-origin'
     });
 
-    const data = await response.json();
+    // Check HTTP status
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    // Check content type
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error('Invalid response received:', text.substring(0, 500));
+      throw new Error('Réponse serveur invalide - HTML reçu au lieu de JSON');
+    }
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      throw new Error('Réponse serveur invalide - JSON invalide');
+    }
 
     if (!response.ok) {
-      throw new Error(data.message || "Erreur API");
+      const errorMessage = data?.message || `Erreur HTTP ${response.status}`;
+      throw new Error(errorMessage);
     }
 
     return data;
   } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+}
     console.error("Erreur API:", error);
     throw error;
   }

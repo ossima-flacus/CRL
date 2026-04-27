@@ -1,13 +1,15 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Remove .php extension from URLs
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.+)\.php$ $1 [R=301,L]
+    # Prevent access to hidden files and directories
+    RewriteRule "^\." - [F]
     
-    # Redirect requests to index.php
+    # Redirect HTTP to HTTPS (if needed)
+    # RewriteCond %{HTTPS} !=on
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # Frontend routes - serve frontend files
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php [QSA,L]
+    RewriteRule ^(?!backend)(.*)$ frontend/$1 [L]
 </IfModule>
