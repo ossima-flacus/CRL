@@ -9,7 +9,7 @@ class DashboardController
 {
     public function dashboard(): void
     {
-        $user = RoleMiddleware::requireRole(['admin', 'secretaire', 'comptable']); // Limited for now
+        $user = RoleMiddleware::requireRole(['admin', 'secretaire', 'comptable', 'parent', 'apprenant']);
 
         try {
             $pdo = Database::connect();

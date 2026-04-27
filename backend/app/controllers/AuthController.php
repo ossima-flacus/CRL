@@ -3,8 +3,6 @@
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../config/Database.php';
 
-session_start();
-
 class AuthController
 {
     public function login(): void
@@ -12,15 +10,17 @@ class AuthController
         $rawBody = file_get_contents('php://input');
         $data = json_decode($rawBody, true);
 
-        if (!isset($data['username']) || !isset($data['password'])) {
-            $this->respond(['success' => false, 'message' => 'Username et mot de passe requis.'], 400);
+        if ((!isset($data['username']) && !isset($data['email'])) || !isset($data['password'])) {
+            $this->respond(['success' => false, 'message' => 'Nom d’utilisateur/email et mot de passe requis.'], 400);
             return;
         }
+
+        $loginValue = $data['username'] ?? $data['email'];
 
         try {
             $pdo = Database::connect();
             $userModel = new User($pdo);
-            $user = $userModel->findByUsername($data['username']);
+            $user = $userModel->findByUsernameOrEmail($loginValue);
 
             if (!$user || !$userModel->verifyPassword($user, $data['password'])) {
                 $this->respond(['success' => false, 'message' => 'Identifiants invalides.'], 401);
@@ -46,13 +46,19 @@ class AuthController
         $rawBody = file_get_contents('php://input');
         $data = json_decode($rawBody, true);
 
-        if (!isset($data['username']) || !isset($data['email']) || !isset($data['password']) || !isset($data['role'])) {
-            $this->respond(['success' => false, 'message' => 'Username, email, mot de passe et rôle requis.'], 400);
+        if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
+            $this->respond(['success' => false, 'message' => 'Username, email et mot de passe requis.'], 400);
+            return;
+        }
+
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $this->respond(['success' => false, 'message' => 'Adresse email invalide.'], 400);
             return;
         }
 
         $allowedRoles = ['admin', 'secretaire', 'comptable', 'parent', 'apprenant'];
-        if (!in_array($data['role'], $allowedRoles)) {
+        $role = $data['role'] ?? 'apprenant';
+        if (!in_array($role, $allowedRoles)) {
             $this->respond(['success' => false, 'message' => 'Rôle invalide.'], 400);
             return;
         }
@@ -71,8 +77,8 @@ class AuthController
                 return;
             }
 
-            $userId = $userModel->create($data['username'], $data['email'], $data['password'], $data['role']);
-            $this->respond(['success' => true, 'user_id' => $userId, 'role' => $data['role'], 'message' => 'Compte créé.']);
+            $userId = $userModel->create($data['username'], $data['email'], $data['password'], $role);
+            $this->respond(['success' => true, 'user_id' => $userId, 'role' => $role, 'message' => 'Compte créé.']);
         } catch (PDOException $e) {
             $this->respond(['success' => false, 'message' => 'Erreur lors de la création.'], 500);
         }

@@ -47,6 +47,7 @@ CRL/
 ## 🛠️ Installation
 
 ### Prérequis
+
 - PHP 7.4+
 - MySQL/MariaDB
 - Apache avec mod_rewrite
@@ -55,24 +56,28 @@ CRL/
 ### Étapes
 
 1. **Cloner le projet**
+
 ```bash
 git clone <votre-repo>
 cd CRL
 ```
 
 2. **Configuration de la base de données**
+
 ```bash
 mysql -u root -p < backend/schema.sql
 ```
 
 3. **Configurer les variables d'environnement**
+
 ```bash
 cp .env.example .env
 # Éditer .env avec vos paramètres
 ```
 
 4. **Configurer Apache**
-Ajouter à `httpd.conf` ou fichier VirtualHost:
+   Ajouter à `httpd.conf` ou fichier VirtualHost:
+
 ```apache
 <Directory "/xampp/htdocs/CRL">
     AllowOverride All
@@ -84,6 +89,7 @@ Ajouter à `httpd.conf` ou fichier VirtualHost:
 ### Authentification
 
 #### Login
+
 ```
 POST /auth/login
 Content-Type: application/json
@@ -95,6 +101,7 @@ Content-Type: application/json
 ```
 
 #### Register
+
 ```
 POST /auth/register
 Content-Type: application/json
@@ -108,12 +115,14 @@ Content-Type: application/json
 ```
 
 #### Me (Get Current User)
+
 ```
 GET /auth/me
 Authorization: Bearer <token>
 ```
 
 #### Logout
+
 ```
 POST /auth/logout
 Authorization: Bearer <token>
@@ -170,7 +179,7 @@ Pour toute question ou problème, contactez l'équipe CRL.
 ## 📅 Changelog
 
 ### v0.1.0 (Initial)
+
 - Système de gestion de base
 - Authentification
 - CRUD Utilisateurs, Classes, Étudiants
-

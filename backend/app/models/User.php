@@ -23,6 +23,15 @@ class User
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function findByUsernameOrEmail(string $value): ?array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM users WHERE (username = :value OR email = :value) AND is_active = TRUE'
+        );
+        $stmt->execute([':value' => $value]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function create(string $username, string $email, string $password, string $role = 'admin'): int
     {
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);

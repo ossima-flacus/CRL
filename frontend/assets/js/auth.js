@@ -1,9 +1,23 @@
 // Authentification API base URL
-const API_BASE = "/backend/public/index.php?route=";
+// Ajuste le chemin en fonction de la profondeur du dossier
+const getApiBase = () => {
+  const currentPath = window.location.pathname;
+
+  // Si on est dans un sous-dossier (pages/), remonter d'un niveau
+  if (currentPath.includes("/pages/")) {
+    return "../../backend/public/index.php?route=";
+  }
+
+  // Sinon, on est dans le dossier racine frontend/
+  return "../backend/public/index.php?route=";
+};
+
+const API_BASE = getApiBase();
 
 // Show message
 function showMessage(message, type = "info") {
   const msgDiv = document.getElementById("loginMessage");
+  if (!msgDiv) return;
   msgDiv.textContent = message;
   msgDiv.className = `message ${type}`;
 }
@@ -70,12 +84,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const username = document.getElementById("regUsername").value;
       const email = document.getElementById("regEmail").value;
       const password = document.getElementById("regPassword").value;
+      const roleElement = document.getElementById("regRole");
+      const role = roleElement ? roleElement.value : "apprenant";
 
       try {
         const response = await fetch(`${API_BASE}auth/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password }),
+          body: JSON.stringify({ username, email, password, role }),
         });
 
         const data = await response.json();

@@ -1,12 +1,13 @@
 <?php
 
-session_start();
-
 class AuthMiddleware
 {
     public static function requireAuth(): ?array
     {
         if (!isset($_SESSION['user_id'])) {
+            if (PHP_SAPI === 'cli' || headers_sent()) {
+                throw new RuntimeException('Authentification requise.');
+            }
             http_response_code(401);
             header('Content-Type: application/json; charset=UTF-8');
             echo json_encode(['success' => false, 'message' => 'Authentification requise.']);
@@ -22,6 +23,9 @@ class AuthMiddleware
             $user = $userModel->findById($_SESSION['user_id']);
             if (!$user) {
                 session_destroy();
+                if (PHP_SAPI === 'cli' || headers_sent()) {
+                    throw new RuntimeException('Session invalide.');
+                }
                 http_response_code(401);
                 header('Content-Type: application/json; charset=UTF-8');
                 echo json_encode(['success' => false, 'message' => 'Session invalide.']);
