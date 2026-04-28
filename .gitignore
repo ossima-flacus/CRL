@@ -1,0 +1,44 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+*.log
+
+# Dependencies
+vendor/
+node_modules/
+composer.lock
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Tests
+coverage/
+.phpunit.result.cache
+
+# Temporary files
+tmp/
+temp/
+cache/
+
+# Application
+sessions/
+uploads/
+storage/
