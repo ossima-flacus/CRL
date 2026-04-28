@@ -13,7 +13,6 @@
 
 # OS
 Thumbs.db
-*.log
 
 # Dependencies
 vendor/
@@ -24,14 +23,6 @@ composer.lock
 *.db
 *.sqlite
 *.sqlite3
-
-# Logs
-logs/
-*.log
-
-# Tests
-coverage/
-.phpunit.result.cache
 
 # Temporary files
 tmp/
