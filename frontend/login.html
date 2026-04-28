@@ -359,7 +359,7 @@
           if (data.success) {
             messageEl.className = "message success";
             messageEl.textContent = "Connexion réussie! Redirection...";
-            setTimeout(() => (window.location.href = "dashboard.html"), 1500);
+            setTimeout(() => (window.location.href = "index.html"), 1500);
           } else {
             messageEl.className = "message error";
             messageEl.textContent = data.message || "Erreur de connexion";

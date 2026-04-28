@@ -30,10 +30,10 @@ async function checkAuth() {
 function addDashboardLink() {
   const navs = document.querySelectorAll("nav, .header-bar, .nav-links");
   navs.forEach((nav) => {
-    let link = nav.querySelector('a[href="dashboard.html"], .dashboard-link');
+    let link = nav.querySelector('a[href="index.html"], .dashboard-link');
     if (!link) {
       link = document.createElement("a");
-      link.href = "dashboard.html";
+      link.href = "index.html";
       link.className = "dashboard-link nav-item";
       link.innerHTML = '<i class="fas fa-tachometer-alt"></i> Dashboard';
       nav.appendChild(link);

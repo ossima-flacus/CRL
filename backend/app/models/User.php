@@ -13,14 +13,16 @@ class User
     {
         $stmt = $this->pdo->prepare('SELECT * FROM users WHERE username = :username AND is_active = TRUE');
         $stmt->execute([':username' => $username]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
     }
 
     public function findById(int $id): ?array
     {
         $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = :id AND is_active = TRUE');
         $stmt->execute([':id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
     }
 
     public function findByUsernameOrEmail(string $value): ?array
@@ -29,7 +31,8 @@ class User
             'SELECT * FROM users WHERE (username = :value OR email = :value) AND is_active = TRUE'
         );
         $stmt->execute([':value' => $value]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
     }
 
     public function create(string $username, string $email, string $password, string $role = 'admin'): int
