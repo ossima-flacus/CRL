@@ -46,7 +46,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Load environment variables
-require __DIR__ . '/../../config.php';
+require __DIR__ . '/../config.php';
 
 // Load required classes
 require __DIR__ . '/../app/config/Database.php';

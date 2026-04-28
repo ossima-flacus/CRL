@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (data.success) {
           showMessage("Connexion réussie ! Redirection...", "success");
           setTimeout(() => {
-            window.location.href = "dashboard.html";
+            window.location.href = "index.html";
           }, 1000);
         } else {
           showMessage(data.message || "Erreur de connexion", "error");
